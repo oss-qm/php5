@@ -95,7 +95,6 @@ int(5)
 bool(false)
 ===GETC===
 string(1) "5"
-bool(false)
 int(6)
 bool(true)
 ===REWIND===
