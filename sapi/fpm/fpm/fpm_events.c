@@ -113,6 +113,11 @@ static void fpm_got_signal(struct fpm_event_s *ev, short which, void *arg) /* {{
 				zlog(ZLOG_NOTICE, "Reloading in progress ...");
 				fpm_pctl(FPM_PCTL_STATE_RELOADING, FPM_PCTL_ACTION_SET);
 				break;
+			case 'H' :                  /* SIGHUP */
+				zlog(ZLOG_DEBUG, "received SIGHUP");
+				zlog(ZLOG_NOTICE, "Reloading in progress ...");
+				fpm_pctl(FPM_PCTL_STATE_RELOADING, FPM_PCTL_ACTION_SET);
+				break;
 		}
 
 		if (fpm_globals.is_child) {

@@ -160,6 +160,7 @@ static void sig_handler(int signo) /* {{{ */
 		[SIGINT]  = 'I',
 		[SIGUSR1] = '1',
 		[SIGUSR2] = '2',
+		[SIGHUP]  = 'H',
 		[SIGQUIT] = 'Q',
 		[SIGCHLD] = 'C'
 	};
@@ -206,6 +207,7 @@ int fpm_signals_init_main() /* {{{ */
 	    0 > sigaction(SIGINT,   &act, 0) ||
 	    0 > sigaction(SIGUSR1,  &act, 0) ||
 	    0 > sigaction(SIGUSR2,  &act, 0) ||
+	    0 > sigaction(SIGHUP,   &act, 0) ||
 	    0 > sigaction(SIGCHLD,  &act, 0) ||
 	    0 > sigaction(SIGQUIT,  &act, 0)) {
 
@@ -235,6 +237,7 @@ int fpm_signals_init_child() /* {{{ */
 	    0 > sigaction(SIGINT,   &act_dfl,  0) ||
 	    0 > sigaction(SIGUSR1,  &act_dfl,  0) ||
 	    0 > sigaction(SIGUSR2,  &act_dfl,  0) ||
+	    0 > sigaction(SIGHUP,   &act_dfl,  0) ||
 	    0 > sigaction(SIGCHLD,  &act_dfl,  0) ||
 	    0 > sigaction(SIGQUIT,  &act,      0)) {
 
