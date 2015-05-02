@@ -31,6 +31,7 @@
 #define YYDEBUG 0
 #define PHP_DEFAULT_CHARSET "UTF-8"
 
+#include "php_config.h"
 #include "php_version.h"
 #include "zend.h"
 #include "zend_qsort.h"

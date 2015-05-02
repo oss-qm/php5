@@ -75,6 +75,8 @@
 
 /* Copy the first part of user declarations.  */
 
+#include <string.h>
+
 
 /*
    +----------------------------------------------------------------------+
