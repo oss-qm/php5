@@ -949,9 +949,6 @@ PHPAPI void php_print_info(int flag TSRMLS_DC)
 #ifdef ARCHITECTURE
 		php_info_print_table_row(2, "Architecture", ARCHITECTURE);
 #endif
-#ifdef CONFIGURE_COMMAND
-		php_info_print_table_row(2, "Configure Command", CONFIGURE_COMMAND );
-#endif
 
 		if (sapi_module.pretty_name) {
 			php_info_print_table_row(2, "Server API", sapi_module.pretty_name );
