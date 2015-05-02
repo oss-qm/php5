@@ -9,6 +9,7 @@ if test "$PHP_GMP" != "no"; then
 
   for i in $PHP_GMP /usr/local /usr; do
     test -f $i/include/gmp.h && GMP_DIR=$i && break
+    test -f $i/include/$DEB_HOST_MULTIARCH/gmp.h && GMP_DIR=$i && break
   done
 
   if test -z "$GMP_DIR"; then
@@ -29,6 +30,7 @@ if test "$PHP_GMP" != "no"; then
 
   PHP_ADD_LIBRARY_WITH_PATH(gmp, $GMP_DIR/$PHP_LIBDIR, GMP_SHARED_LIBADD)
   PHP_ADD_INCLUDE($GMP_DIR/include)
+  PHP_ADD_INCLUDE($GMP_DIR/include/$DEB_HOST_MULTIARCH)
 
   PHP_NEW_EXTENSION(gmp, gmp.c, $ext_shared)
   PHP_SUBST(GMP_SHARED_LIBADD)
