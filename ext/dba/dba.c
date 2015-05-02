@@ -52,6 +52,10 @@
 #include "php_qdbm.h"
 #include "php_tcadb.h"
 
+#ifdef DB4_INCLUDE_FILE
+#include DB4_INCLUDE_FILE
+#endif
+
 /* {{{ arginfo */
 ZEND_BEGIN_ARG_INFO_EX(arginfo_dba_popen, 0, 0, 2)
 	ZEND_ARG_INFO(0, path)
@@ -535,6 +539,10 @@ PHP_MINFO_FUNCTION(dba)
 
 	php_info_print_table_start();
  	php_info_print_table_row(2, "DBA support", "enabled");
+#ifdef DB_VERSION_STRING
+ 	php_info_print_table_row(2, "libdb header version", DB_VERSION_STRING);
+ 	php_info_print_table_row(2, "libdb library version", db_version(NULL, NULL, NULL));
+#endif
 	if (handlers.c) {
 		smart_str_0(&handlers);
 		php_info_print_table_row(2, "Supported handlers", handlers.c);
