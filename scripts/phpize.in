@@ -4,8 +4,8 @@
 prefix='@prefix@'
 datarootdir='@datarootdir@'
 exec_prefix="`eval echo @exec_prefix@`"
-phpdir="`eval echo @libdir@`/build"
-includedir="`eval echo @includedir@`/php"
+phpdir="$prefix/lib/php5/build"
+includedir="$prefix/include/php5"
 builddir="`pwd`"
 SED="@SED@"
 
