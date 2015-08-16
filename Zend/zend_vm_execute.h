@@ -1354,8 +1354,11 @@ static int ZEND_FASTCALL  ZEND_FAST_CALL_SPEC_HANDLER(ZEND_OPCODE_HANDLER_ARGS)
 		ZEND_VM_SET_OPCODE(&EX(op_array)->opcodes[opline->op2.opline_num]);
 		ZEND_VM_CONTINUE();
 	}
-	EX(fast_ret) = opline;
-	EX(delayed_exception) = NULL;
+	if (UNEXPECTED(EX(delayed_exception) != NULL)) {
+		EX(fast_ret) = NULL;
+	} else {
+		EX(fast_ret) = opline;
+	}
 	ZEND_VM_SET_OPCODE(opline->op1.jmp_addr);
 	ZEND_VM_CONTINUE();
 }
@@ -15692,7 +15695,9 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_SPEC_VAR_CONST_HANDLER(ZEND_OPCODE_HANDLER
 		}
 	}
 
-	if (free_op1.var) {zval_ptr_dtor_nogc(&free_op1.var);};
+	if (IS_VAR == IS_VAR && (free_op1.var != NULL)) {
+		zval_ptr_dtor_nogc(&value);
+	}
 
 	/* zend_assign_to_variable() always takes care of op2, never free it! */
 
@@ -18043,7 +18048,9 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_SPEC_VAR_TMP_HANDLER(ZEND_OPCODE_HANDLER_A
 		}
 	}
 
-	if (free_op1.var) {zval_ptr_dtor_nogc(&free_op1.var);};
+	if (IS_VAR == IS_VAR && (free_op1.var != NULL)) {
+		zval_ptr_dtor_nogc(&value);
+	}
 
 	/* zend_assign_to_variable() always takes care of op2, never free it! */
 
@@ -20303,7 +20310,9 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_SPEC_VAR_VAR_HANDLER(ZEND_OPCODE_HANDLER_A
 		}
 	}
 
-	if (free_op1.var) {zval_ptr_dtor_nogc(&free_op1.var);};
+	if (IS_VAR == IS_VAR && (free_op1.var != NULL)) {
+		zval_ptr_dtor_nogc(&value);
+	}
 
 	/* zend_assign_to_variable() always takes care of op2, never free it! */
  	zval_ptr_dtor_nogc(&free_op2.var);
@@ -20322,6 +20331,10 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_REF_SPEC_VAR_VAR_HANDLER(ZEND_OPCODE_HANDL
 	SAVE_OPLINE();
 	value_ptr_ptr = _get_zval_ptr_ptr_var(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
 
+	if (IS_VAR == IS_VAR && UNEXPECTED(EX_T(opline->op1.var).var.ptr_ptr == &EX_T(opline->op1.var).var.ptr)) {
+		zend_error_noreturn(E_ERROR, "Cannot assign by reference to overloaded object");
+	}
+
 	if (IS_VAR == IS_VAR &&
 	    value_ptr_ptr &&
 	    !Z_ISREF_PP(value_ptr_ptr) &&
@@ -20338,9 +20351,6 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_REF_SPEC_VAR_VAR_HANDLER(ZEND_OPCODE_HANDL
 		return ZEND_ASSIGN_SPEC_VAR_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS_PASSTHRU);
 	} else if (IS_VAR == IS_VAR && opline->extended_value == ZEND_RETURNS_NEW) {
 		PZVAL_LOCK(*value_ptr_ptr);
-	}
-	if (IS_VAR == IS_VAR && UNEXPECTED(EX_T(opline->op1.var).var.ptr_ptr == &EX_T(opline->op1.var).var.ptr)) {
-		zend_error_noreturn(E_ERROR, "Cannot assign by reference to overloaded object");
 	}
 
 	variable_ptr_ptr = _get_zval_ptr_ptr_var(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
@@ -23772,7 +23782,9 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_SPEC_VAR_CV_HANDLER(ZEND_OPCODE_HANDLER_AR
 		}
 	}
 
-	if (free_op1.var) {zval_ptr_dtor_nogc(&free_op1.var);};
+	if (IS_VAR == IS_VAR && (free_op1.var != NULL)) {
+		zval_ptr_dtor_nogc(&value);
+	}
 
 	/* zend_assign_to_variable() always takes care of op2, never free it! */
 
@@ -23790,6 +23802,10 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_REF_SPEC_VAR_CV_HANDLER(ZEND_OPCODE_HANDLE
 	SAVE_OPLINE();
 	value_ptr_ptr = _get_zval_ptr_ptr_cv_BP_VAR_W(execute_data, opline->op2.var TSRMLS_CC);
 
+	if (IS_VAR == IS_VAR && UNEXPECTED(EX_T(opline->op1.var).var.ptr_ptr == &EX_T(opline->op1.var).var.ptr)) {
+		zend_error_noreturn(E_ERROR, "Cannot assign by reference to overloaded object");
+	}
+
 	if (IS_CV == IS_VAR &&
 	    value_ptr_ptr &&
 	    !Z_ISREF_PP(value_ptr_ptr) &&
@@ -23806,9 +23822,6 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_REF_SPEC_VAR_CV_HANDLER(ZEND_OPCODE_HANDLE
 		return ZEND_ASSIGN_SPEC_VAR_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS_PASSTHRU);
 	} else if (IS_CV == IS_VAR && opline->extended_value == ZEND_RETURNS_NEW) {
 		PZVAL_LOCK(*value_ptr_ptr);
-	}
-	if (IS_VAR == IS_VAR && UNEXPECTED(EX_T(opline->op1.var).var.ptr_ptr == &EX_T(opline->op1.var).var.ptr)) {
-		zend_error_noreturn(E_ERROR, "Cannot assign by reference to overloaded object");
 	}
 
 	variable_ptr_ptr = _get_zval_ptr_ptr_var(opline->op1.var, execute_data, &free_op1 TSRMLS_CC);
@@ -33211,6 +33224,10 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_SPEC_CV_CONST_HANDLER(ZEND_OPCODE_HANDLER_
 		}
 	}
 
+	if (IS_CV == IS_VAR && 0) {
+		zval_ptr_dtor_nogc(&value);
+	}
+
 	/* zend_assign_to_variable() always takes care of op2, never free it! */
 
 	CHECK_EXCEPTION();
@@ -35329,6 +35346,10 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_SPEC_CV_TMP_HANDLER(ZEND_OPCODE_HANDLER_AR
 			PZVAL_LOCK(value);
 			EX_T(opline->result.var).var.ptr = value;
 		}
+	}
+
+	if (IS_CV == IS_VAR && 0) {
+		zval_ptr_dtor_nogc(&value);
 	}
 
 	/* zend_assign_to_variable() always takes care of op2, never free it! */
@@ -37452,6 +37473,10 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_SPEC_CV_VAR_HANDLER(ZEND_OPCODE_HANDLER_AR
 		}
 	}
 
+	if (IS_CV == IS_VAR && 0) {
+		zval_ptr_dtor_nogc(&value);
+	}
+
 	/* zend_assign_to_variable() always takes care of op2, never free it! */
  	zval_ptr_dtor_nogc(&free_op2.var);
 
@@ -37469,6 +37494,10 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_REF_SPEC_CV_VAR_HANDLER(ZEND_OPCODE_HANDLE
 	SAVE_OPLINE();
 	value_ptr_ptr = _get_zval_ptr_ptr_var(opline->op2.var, execute_data, &free_op2 TSRMLS_CC);
 
+	if (IS_CV == IS_VAR && UNEXPECTED(EX_T(opline->op1.var).var.ptr_ptr == &EX_T(opline->op1.var).var.ptr)) {
+		zend_error_noreturn(E_ERROR, "Cannot assign by reference to overloaded object");
+	}
+
 	if (IS_VAR == IS_VAR &&
 	    value_ptr_ptr &&
 	    !Z_ISREF_PP(value_ptr_ptr) &&
@@ -37485,9 +37514,6 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_REF_SPEC_CV_VAR_HANDLER(ZEND_OPCODE_HANDLE
 		return ZEND_ASSIGN_SPEC_CV_VAR_HANDLER(ZEND_OPCODE_HANDLER_ARGS_PASSTHRU);
 	} else if (IS_VAR == IS_VAR && opline->extended_value == ZEND_RETURNS_NEW) {
 		PZVAL_LOCK(*value_ptr_ptr);
-	}
-	if (IS_CV == IS_VAR && UNEXPECTED(EX_T(opline->op1.var).var.ptr_ptr == &EX_T(opline->op1.var).var.ptr)) {
-		zend_error_noreturn(E_ERROR, "Cannot assign by reference to overloaded object");
 	}
 
 	variable_ptr_ptr = _get_zval_ptr_ptr_cv_BP_VAR_W(execute_data, opline->op1.var TSRMLS_CC);
@@ -40632,6 +40658,10 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_SPEC_CV_CV_HANDLER(ZEND_OPCODE_HANDLER_ARG
 		}
 	}
 
+	if (IS_CV == IS_VAR && 0) {
+		zval_ptr_dtor_nogc(&value);
+	}
+
 	/* zend_assign_to_variable() always takes care of op2, never free it! */
 
 	CHECK_EXCEPTION();
@@ -40647,6 +40677,10 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_REF_SPEC_CV_CV_HANDLER(ZEND_OPCODE_HANDLER
 
 	SAVE_OPLINE();
 	value_ptr_ptr = _get_zval_ptr_ptr_cv_BP_VAR_W(execute_data, opline->op2.var TSRMLS_CC);
+
+	if (IS_CV == IS_VAR && UNEXPECTED(EX_T(opline->op1.var).var.ptr_ptr == &EX_T(opline->op1.var).var.ptr)) {
+		zend_error_noreturn(E_ERROR, "Cannot assign by reference to overloaded object");
+	}
 
 	if (IS_CV == IS_VAR &&
 	    value_ptr_ptr &&
@@ -40664,9 +40698,6 @@ static int ZEND_FASTCALL  ZEND_ASSIGN_REF_SPEC_CV_CV_HANDLER(ZEND_OPCODE_HANDLER
 		return ZEND_ASSIGN_SPEC_CV_CV_HANDLER(ZEND_OPCODE_HANDLER_ARGS_PASSTHRU);
 	} else if (IS_CV == IS_VAR && opline->extended_value == ZEND_RETURNS_NEW) {
 		PZVAL_LOCK(*value_ptr_ptr);
-	}
-	if (IS_CV == IS_VAR && UNEXPECTED(EX_T(opline->op1.var).var.ptr_ptr == &EX_T(opline->op1.var).var.ptr)) {
-		zend_error_noreturn(E_ERROR, "Cannot assign by reference to overloaded object");
 	}
 
 	variable_ptr_ptr = _get_zval_ptr_ptr_cv_BP_VAR_W(execute_data, opline->op1.var TSRMLS_CC);
