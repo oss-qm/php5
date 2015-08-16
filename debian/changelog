@@ -1,3 +1,106 @@
+php5 (5.6.12+dfsg-0+deb8u1) jessie-security; urgency=medium
+
+  * New upstream version 5.6.12+dfsg
+   - Core:
+    . Fixed bug #70012 (Exception lost with nested finally block).
+    . Fixed bug #70002 (TS issues with temporary dir handling).
+    . Fixed bug #69793 (Remotely triggerable stack exhaustion via recursive
+      method calls).
+    . Fixed bug #69892 (Different arrays compare indentical due to integer key
+      truncation).
+    . Fixed bug #70121 (unserialize() could lead to unexpected methods execution
+      / NULL pointer deref).
+   - CLI server:
+    . Fixed bug #69655 (php -S changes MKCALENDAR request method to MKCOL).
+    . Fixed bug #64878 (304 responses return Content-Type header).
+   - GD:
+    . Fixed bug #53156 (imagerectangle problem with point ordering).
+    . Fixed bug #66387 (Stack overflow with imagefilltoborder).
+    . Fixed bug #70102 (imagecreatefromwebm() shifts colors).
+    . Fixed bug #66590 (imagewebp() doesn't pad to even length).
+    . Fixed bug #66882 (imagerotate by -90 degrees truncates image by 1px).
+    . Fixed bug #70064 (imagescale(..., IMG_BICUBIC) leaks memory).
+    . Fixed bug #69024 (imagescale segfault with palette based image).
+    . Fixed bug #53154 (Zero-height rectangle has whiskers).
+    . Fixed bug #67447 (imagecrop() add a black line when cropping).
+    . Fixed bug #68714 (copy 'n paste error).
+    . Fixed bug #66339 (PHP segfaults in imagexbm).
+    . Fixed bug #70047 (gd_info() doesn't report WebP support).
+   - ODBC:
+    . Fixed bug #69975 (PHP segfaults when accessing nvarchar(max) defined
+      columns).
+   - OpenSSL:
+    . Fixed bug #69882 (OpenSSL error “key values mismatch” after 
+      openssl_pkcs12_read with extra cert)
+    . Fixed bug #70014 (openssl_random_pseudo_bytes() is not cryptographically
+      secure).
+   - Phar:
+    . Improved fix for bug #69441.
+    . Fixed bug #70019 (Files extracted from archive may be placed outside of
+      destination directory).
+   - SOAP:
+    . Fixed bug #70081 (SoapClient info leak / null pointer dereference via
+      multiple type confusions).
+   - SPL:
+    . Fixed bug #70068 (Dangling pointer in the unserialization of ArrayObject
+      items).
+    . Fixed bug #70166 (Use After Free Vulnerability in unserialize() with
+      SPLArrayObject).
+    . Fixed bug #70168 (Use After Free Vulnerability in unserialize() with
+      SplObjectStorage).
+    . Fixed bug #70169 (Use After Free Vulnerability in unserialize() with
+      SplDoublyLinkedList).
+   - Standard:
+    . Fixed bug #70096 (Repeated iptcembed() adds superfluous FF bytes).
+  * New upstream version 5.6.11
+   - Core:
+    . Fixed bug #69768 (escapeshell*() doesn't cater to !).
+    . Fixed bug #69703 (Use __builtin_clzl on PowerPC).
+    . Fixed bug #69732 (can induce segmentation fault with basic php code).
+    . Fixed bug #69642 (Windows 10 reported as Windows 8).
+    . Fixed bug #69551 (parse_ini_file() and parse_ini_string() segmentation
+      fault).
+    . Fixed bug #69781 (phpinfo() reports Professional Editions of Windows
+      7/8/8.1/10 as "Business").
+    . Fixed bug #69740 (finally in generator (yield) swallows exception in
+      iteration).
+    . Fixed bug #69835 (phpinfo() does not report many Windows SKUs).
+    . Fixed bug #69892 (Different arrays compare indentical due to integer key
+      truncation).
+    . Fixed bug #69874 (Can't set empty additional_headers for mail()), regression
+      from fix to bug #68776.
+   - GD:
+    . Fixed bug #61221 (imagegammacorrect function loses alpha channel).
+   - GMP:
+    . Fixed bug #69803 (gmp_random_range() modifies second parameter if GMP
+      number).
+   - Mysqlnd:
+    . Fixed bug #69669 (mysqlnd is vulnerable to BACKRONYM) (CVE-2015-3152).
+   - PCRE:
+    . Fixed Bug #53823 (preg_replace: * qualifier on unicode replace garbles the
+      string).
+    . Fixed bug #69864 (Segfault in preg_replace_callback)
+   - PDO_pgsql:
+    . Fixed bug #69752 (PDOStatement::execute() leaks memory with DML
+      Statements when closeCuror() is u).
+    . Fixed bug #69362 (PDO-pgsql fails to connect if password contains a
+      leading single quote).
+    . Fixed bug #69344 (PDO PgSQL Incorrect binding numeric array with gaps).
+   - SimpleXML:
+    . Refactored the fix for bug #66084 (simplexml_load_string() mangles empty
+      node name).
+   - SPL:
+    . Fixed bug #69737 (Segfault when SplMinHeap::compare produces fatal error).
+    . Fixed bug #67805 (SplFileObject setMaxLineLength).
+    . Fixed bug #69970 (Use-after-free vulnerability in
+      spl_recursive_it_move_forward_ex()).
+   - Sqlite3:
+    . Fixed bug #69972 (Use-after-free vulnerability in
+      sqlite3SafetyCheckSickOrOk()).
+  * Rebase d/patches on top of 5.6.12+dfsg release
+
+ -- Ondřej Surý <ondrej@debian.org>  Sun, 16 Aug 2015 14:02:47 +0200
+
 php5 (5.6.10+dfsg-0+deb8u1) jessie-security; urgency=medium
 
   * New upstream version 5.6.10+dfsg
