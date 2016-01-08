@@ -1,3 +1,45 @@
+php5 (5.6.17+dfsg-0+deb8u1) jessie-security; urgency=high
+
+  * Imported Upstream version 5.6.17+dfsg
+   - Core:
+    . Fixed bug #66909 (configure fails utf8_to_mutf7 test).
+    . Fixed bug #70958 (Invalid opcode while using ::class as trait method
+      parameter default value).
+    . Fixed bug #70957 (self::class can not be resolved with reflection
+      for abstract class).
+    . Fixed bug #70944 (try{ } finally{} can create infinite chains of
+      exceptions).
+    . Fixed bug #61751 (SAPI build problem on AIX: Undefined symbol:
+      php_register_internal_extensions).
+   - FPM:
+    . Fixed bug #70755 (fpm_log.c memory leak and buffer overflow).
+   - GD:
+    . Fixed bug #70976 (Memory Read via gdImageRotateInterpolated Array
+      Index Out of Bounds).
+   - Mysqlnd:
+    . Fixed bug #68077 (LOAD DATA LOCAL INFILE / open_basedir
+      restriction).
+   - SOAP:
+    . Fixed bug #70900 (SoapClient systematic out of memory error).
+   - Standard:
+    . Fixed bug #70960 (ReflectionFunction for array_unique returns wrong
+      number of parameters).
+   - PDO_Firebird:
+    . Fixed bug #60052 (Integer returned as a 64bit integer on X64_86).
+   - WDDX:
+    . Fixed bug #70661 (Use After Free Vulnerability in WDDX Packet
+      Deserialization).
+    . Fixed bug #70741 (Session WDDX Packet Deserialization Type Confusion
+      Vulnerability).
+   - XMLRPC:
+    . Fixed bug #70728 (Type Confusion Vulnerability in
+      PHP_to_XMLRPC_worker()).
+  * Rebase patches on top of 5.6.17+dfsg release
+  * Make phar command versioned and use update-alternatives for 'phar'
+    name to allow coinstallation with src:php7.0 packages
+
+ -- Ondřej Surý <ondrej@debian.org>  Fri, 08 Jan 2016 09:01:13 +0100
+
 php5 (5.6.16+dfsg-0+deb8u1) jessie-security; urgency=medium
 
   * Imported Upstream version 5.6.16+dfsg
