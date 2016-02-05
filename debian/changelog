@@ -1,4 +1,4 @@
-php5 (5.6.18+dfsg-1) jessie-security; urgency=medium
+php5 (5.6.18+dfsg-0+deb8u1) jessie-security; urgency=medium
 
   * Merge patch for ODBC bug fix varchars returning with length zero
   * Fix missing phpdbg sapi from the for loop that prevented the modules to be enabled for phpdbg SAPI
