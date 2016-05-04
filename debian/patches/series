@@ -48,3 +48,4 @@
 0048-revert-f07b8f36ae8099e29d19fbe8806bc07b21dcd4ac.patch
 0049-Revert-PEAR-version-to-last-working-version-from-PHP.patch
 0050-Fix-ODBC-bug-for-varchars-returning-with-length-zero.patch
+0051-make-opcache-lockfile-path-configurable.patch
