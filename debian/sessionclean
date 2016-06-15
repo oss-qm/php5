@@ -22,7 +22,7 @@ while IFS=: read -r conf_dir proc_name; do
 done
 # first find all open session files and touch them (hope it's not massive amount of files)
 for pid in $(pidof $proc_names); do
-    find "/proc/$pid/fd" -ignore_readdir_race -lname "$save_path/sess_\*" -exec touch -c {} \;
+    find "/proc/$pid/fd" -ignore_readdir_race -lname "$save_path/sess_\*" -exec touch -c {} \; 2>/dev/null
 done
 } ) | sort -rn -t: -k2,2 | sort -u -t: -k 1,1 | while IFS=: read -r save_path gc_maxlifetime; do
     # find all files older then maxlifetime and delete them
