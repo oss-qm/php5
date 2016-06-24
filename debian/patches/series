@@ -46,5 +46,4 @@
 0046-Fix-ZEND_MM_ALIGNMENT-on-m64k.patch
 0047-revert-f07b8f36ae8099e29d19fbe8806bc07b21dcd4ac.patch
 0048-Revert-PEAR-version-to-last-working-version-from-PHP.patch
-0049-Fix-ODBC-bug-for-varchars-returning-with-length-zero.patch
-0050-make-opcache-lockfile-path-configurable.patch
+0049-make-opcache-lockfile-path-configurable.patch
