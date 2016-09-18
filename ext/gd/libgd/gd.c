@@ -1670,23 +1670,17 @@ long lsqrt (long n)
 /* s and e are integers modulo 360 (degrees), with 0 degrees
    being the rightmost extreme and degrees changing clockwise.
    cx and cy are the center in pixels; w and h are the horizontal
-   and vertical diameter in pixels. Nice interface, but slow.
-   See gd_arc_f_buggy.c for a better version that doesn't
-   seem to be bug-free yet. */
+   and vertical diameter in pixels. */
 
 void gdImageArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color)
 {
-	if ((s % 360) == (e % 360)) {
-		gdImageEllipse(im, cx, cy, w, h, color);
-	} else {
-		gdImageFilledArc(im, cx, cy, w, h, s, e, color, gdNoFill);
-	}
+	gdImageFilledArc(im, cx, cy, w, h, s, e, color, gdNoFill);
 }
 
 void gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e, int color, int style)
 {
-	gdPoint pts[3];
-	int i;
+	gdPoint pts[363];
+	int i, pti;
 	int lx = 0, ly = 0;
 	int fx = 0, fy = 0;
 
@@ -1714,7 +1708,7 @@ void gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e
 		}
 	}
 
-	for (i = s; i <= e; i++) {
+	for (i = s, pti = 1; i <= e; i++, pti++) {
 		int x, y;
 		x = ((long) gdCosT[i % 360] * (long) w / (2 * 1024)) + cx;
 		y = ((long) gdSinT[i % 360] * (long) h / (2 * 1024)) + cy;
@@ -1723,19 +1717,28 @@ void gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e
 				if (style & gdNoFill) {
 					gdImageLine(im, lx, ly, x, y, color);
 				} else {
-					/* This is expensive! */
-					pts[0].x = lx;
-					pts[0].y = ly;
-					pts[1].x = x;
-					pts[1].y = y;
-					pts[2].x = cx;
-					pts[2].y = cy;
-					gdImageFilledPolygon(im, pts, 3, color);
-				}
+					if (y == ly) {
+						pti--; /* don't add this point */
+						if (((i > 270 || i < 90) && x > lx) || ((i >  90 && i < 270) && x < lx)) {
+							/* replace the old x coord, if increasing on the
+							   right side or decreasing on the left side */
+							pts[pti].x = x;
+						}
+					} else {
+						pts[pti].x = x;
+						pts[pti].y = y;
+					}
+  				}
 			}
 		} else {
 			fx = x;
 			fy = y;
+			if (!(style & (gdChord | gdNoFill))) {
+				pts[0].x = cx;
+				pts[0].y = cy;
+				pts[pti].x = x;
+				pts[pti].y = y;
+			}
 		}
 		lx = x;
 		ly = y;
@@ -1762,6 +1765,10 @@ void gdImageFilledArc (gdImagePtr im, int cx, int cy, int w, int h, int s, int e
 				gdImageLine(im, cx, cy, lx, ly, color);
 				gdImageLine(im, cx, cy, fx, fy, color);
 			}
+		} else {
+			pts[pti].x = cx;
+			pts[pti].y = cy;
+			gdImageFilledPolygon(im, pts, pti+1, color);
 		}
 	}
 }
@@ -2240,7 +2247,9 @@ void gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, 
 			for (y = 0; (y < h); y++) {
 				for (x = 0; (x < w); x++) {
 					int c = gdImageGetTrueColorPixel (src, srcX + x, srcY + y);
-					gdImageSetPixel (dst, dstX + x, dstY + y, c);
+					if (c != src->transparent) {
+						gdImageSetPixel (dst, dstX + x, dstY + y, c);
+					}
 				}
 			}
 		} else {
@@ -2253,26 +2262,6 @@ void gdImageCopy (gdImagePtr dst, gdImagePtr src, int dstX, int dstY, int srcX, 
 					}
 				}
 			}
-		}
-		return;
-	}
-
-	/* Destination is palette based */
-	if (src->trueColor) { /* But source is truecolor (Ouch!) */
-		toy = dstY;
-		for (y = srcY; (y < (srcY + h)); y++) {
-			tox = dstX;
-			for (x = srcX; x < (srcX + w); x++) {
-				int nc;
-				c = gdImageGetPixel (src, x, y);
-
-				/* Get best match possible. */
-				nc = gdImageColorResolveAlpha(dst, gdTrueColorGetRed(c), gdTrueColorGetGreen(c), gdTrueColorGetBlue(c), gdTrueColorGetAlpha(c));
-
-				gdImageSetPixel(dst, tox, toy, nc);
-				tox++;
-			}
-			toy++;
 		}
 		return;
 	}
