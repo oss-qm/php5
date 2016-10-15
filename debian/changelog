@@ -1,3 +1,10 @@
+php5 (5.6.27+dfsg-0+deb8u1) jessie-security; urgency=high
+
+  * Imported Upstream version 5.6.27+dfsg
+  * Rebase patches on to of 5.6.27+dfsg
+
+ -- Ondřej Surý <ondrej@debian.org>  Sat, 15 Oct 2016 17:40:23 +0200
+
 php5 (5.6.26+dfsg-0+deb8u1) jessie-security; urgency=high
 
   * Imported Upstream version 5.6.26+dfsg
