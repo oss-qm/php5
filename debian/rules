@@ -55,12 +55,6 @@ ifeq (yes,$(RUN_TESTS))
   MYSQL_SOCKET = $(MYSQL_DATA_DIR)/mysql.sock
 endif
 
-ifeq (linux,$(DEB_HOST_ARCH_OS))
-  CONFIGURE_SYSTEMD = --with-fpm-systemd
-else
-  CONFIGURE_SYSTEMD = --without-fpm-systemd
-endif
-
 ifeq ($(DEB_HOST_ARCH),$(filter $(DEB_HOST_ARCH),amd64 armel armhf i386 ia64 powerpc))
   CONFIGURE_DTRACE_ARGS = --enable-dtrace
 else
@@ -467,7 +461,7 @@ configure-fpm-stamp: prepared-stamp
 		--disable-pdo \
 		--without-mysql --without-sybase-ct \
 		--without-mssql --without-sqlite3 \
-		$(CONFIGURE_SYSTEMD)
+		--without-fpm-systemd
 	cd fpm-build && \
 	cp ../Zend/zend_ini_scanner.c ../Zend/zend_language_scanner.c \
 	   ../Zend/zend_ini_parser.h ../Zend/zend_language_parser.h \
@@ -858,9 +852,7 @@ binary-arch: build install
 	dh_installlogrotate -pphp5-fpm
 	dh_installcron -pphp5-common --name=php5
 	dh_installchangelogs -pphp5-common NEWS
-	dh_systemd_enable
 	dh_installinit
-	dh_systemd_start
 	dh_link -s
 	dh_compress -s -Xphp.ini
 	dh_fixperms -s -X/var/lib/php5
